@@ -1,0 +1,13 @@
+import java.io.*;
+
+public class Nuke2 {
+
+	public static void main() {
+		
+		BufferedReader keyboard;
+		String inputLine;
+		
+		keyboard = new BufferedReader(new InputStreamReader(System.in));
+		
+	}
+}
