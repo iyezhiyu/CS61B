@@ -78,7 +78,12 @@ class SibTreeNode extends TreeNode {
    */
   public TreeNode parent() throws InvalidNodeException {
     // REPLACE THE FOLLOWING LINE WITH YOUR SOLUTION TO PART I.
-    return null;
+    if (! isValidNode()) {
+    	throw new InvalidNodeException();
+    } else {
+    	if (parent == null) return new SibTreeNode();
+    	else return parent;
+    }
   }
 
   /**
@@ -133,6 +138,41 @@ class SibTreeNode extends TreeNode {
    */
   public void insertChild(Object item, int c) throws InvalidNodeException {
     // FILL IN YOUR SOLUTION TO PART II HERE.
+	  if (!isValidNode()) throw new InvalidNodeException();
+	  else {
+		  SibTreeNode newChild=new SibTreeNode(myTree, item);
+		  newChild.parent=this;
+		  myTree.size++;
+		  if (c<1) {
+			  c=1;
+		  }
+		  if (firstChild !=null) {
+			  if (children()<c) {
+				  SibTreeNode theChild=(SibTreeNode) child(children());
+				  theChild.nextSibling=newChild;
+			  } else if ((children()>=c) && (c>1)) {
+				  SibTreeNode theChild=(SibTreeNode) child(c-1);
+				  SibTreeNode tempNode=(SibTreeNode) theChild.nextSibling();
+				  theChild.nextSibling=newChild;
+				  while (tempNode.isValidNode()) {
+					  theChild=(SibTreeNode) theChild.nextSibling();
+					  theChild.nextSibling=tempNode;
+					  tempNode=(SibTreeNode) tempNode.nextSibling();
+				  }
+			  } else if (c==1) {
+				  SibTreeNode tempNode=firstChild;
+				  firstChild=newChild;
+				  SibTreeNode theChild=firstChild;
+				  while (tempNode.isValidNode()) {
+					  theChild.nextSibling=tempNode;
+					  tempNode=(SibTreeNode) tempNode.nextSibling();
+					  theChild=(SibTreeNode) theChild.nextSibling();
+				  }
+			  }
+		  } else {
+			  firstChild=newChild;
+		  }
+	  }
   }
 
   /**
@@ -143,6 +183,37 @@ class SibTreeNode extends TreeNode {
    */
   public void removeLeaf() throws InvalidNodeException {
     // FILL IN YOUR SOLUTION TO PART III HERE.
+	  if (!isValidNode()) throw new InvalidNodeException();
+	  else if (firstChild == null) {
+		  if (this==myTree.root) {
+			  myTree.root=null;
+			  valid=false;
+			  myTree.size--;
+		  } else {
+			  if (nextSibling == null) {
+				  if (parent.children()==1) {
+					  parent.firstChild=null;
+				  } else {
+					  SibTreeNode theChild=(SibTreeNode) parent.child(parent.children()-1);
+					  theChild.nextSibling=null;
+				  }
+			  } else {
+				  if (parent.firstChild==this) {
+					  parent.firstChild=(SibTreeNode) nextSibling();
+				  } else {
+					  SibTreeNode theChild=(SibTreeNode) parent.firstChild;
+					  while (theChild.nextSibling != this) {
+						  theChild=(SibTreeNode) theChild.nextSibling();
+					  }
+					  theChild.nextSibling=(SibTreeNode) theChild.nextSibling.nextSibling();
+				  }
+			  }
+			  valid=false;
+			  myTree.size--;
+			  parent=null;
+			  nextSibling=null;
+		  }
+	  }
   }
 
 }
