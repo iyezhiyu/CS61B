@@ -131,7 +131,23 @@ public class BinaryTree implements Dictionary {
 
   private BinaryTreeNode findHelper(Comparable key, BinaryTreeNode node) {
     // Replace the following line with your solution.
-    return null;
+	if (key.compareTo(node.entry.key()) == 0) {
+		return node;
+	} else if (key.compareTo(node.entry.key()) < 0) {
+		if (node.leftChild != null) {
+			return findHelper(key, node.leftChild);
+		} else {
+			return null;
+		}
+	} else if (key.compareTo(node.entry.key()) > 0) {
+		if (node.rightChild != null) {
+			return findHelper(key, node.rightChild);
+		} else {
+			return null;
+		}
+	} else {
+		return null;
+	}
   }
 
   /** 
@@ -147,9 +163,87 @@ public class BinaryTree implements Dictionary {
    **/
   public Entry remove(Object key) {
     // Replace the following line with your solution.
-    return null;
+    BinaryTreeNode node=findHelper((Comparable) key, root);
+    if (node == null) {
+    	return null;
+    } else {
+    	removeHelper(node);
+    	size--;
+    	return node.entry;
+    }
   }
-
+  
+  public void removeHelper(BinaryTreeNode node) {
+	  if (node != root) {
+		  BinaryTreeNode parentNode=node.parent;
+		  if (node.leftChild == null && node.rightChild == null) {
+			  if (parentNode.leftChild == node) parentNode.leftChild=null; 
+			  else parentNode.rightChild=null;
+			  node.parent = null;
+			  return;
+		  }
+		  else if (node.leftChild == null || node.rightChild == null) {
+			  if (parentNode.leftChild == node) parentNode.leftChild=removeOneChild(node);
+			  else parentNode.rightChild = removeOneChild(node);
+			  return;
+		  } else {
+			  BinaryTreeNode bin=findLeftMostChild(node.rightChild);
+			  if (parentNode.leftChild == node) parentNode.leftChild=bin;
+			  else parentNode.rightChild = bin;
+			  bin.parent = parentNode;
+			  bin.leftChild = node.leftChild;
+			  bin.rightChild=node.rightChild;
+			  if (bin.rightChild != null) bin.rightChild.parent=bin;
+			  if (bin.leftChild !=null) bin.leftChild.parent=bin;
+			  return;
+		  }
+	  } else {
+		  if (size == 1) {
+			  root = null;
+			  return;
+		  } else {
+			  if(node.leftChild == null || node.rightChild == null){
+					if(node.leftChild == null){
+						 root = root.rightChild;
+						 root.parent = null;
+						 return;
+					}else{
+						root = root.leftChild;
+						root.parent = null;
+						return;
+					}
+			        }else{
+					root = findLeftMostChild(node.rightChild);
+					root.parent = null;
+					root.leftChild = node.leftChild;
+					root.rightChild = node.rightChild;
+					root.leftChild.parent = root;
+					root.rightChild.parent = root;
+					return;
+				}
+		  }
+	  }
+  }
+  
+  public BinaryTreeNode removeOneChild(BinaryTreeNode node) {
+	  if (node.leftChild==null) {
+		  node.rightChild.parent=node.parent;
+		  return node.rightChild;
+	  } else {
+		  node.leftChild.parent=node.parent;
+		  return node.leftChild;
+	  }
+  }
+  
+  public BinaryTreeNode findLeftMostChild(BinaryTreeNode node) {
+	  while (node.leftChild != null) {
+		  node = node.leftChild;
+	  }
+	  removeHelper(node);
+	  return node;
+  }
+  
+  
   /**
    *  Convert the tree into a string.
    **/
