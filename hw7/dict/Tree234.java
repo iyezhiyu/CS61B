@@ -102,8 +102,87 @@ public class Tree234 extends IntDictionary {
    **/
   public void insert(int key) {
     // Fill in your solution here.
+	if (isEmpty()) {
+		root = new Tree234Node(null, key);
+		size = 1;
+		return;
+	}
+	
+	Tree234Node node=root;
+	while (node != null) {
+		if (keyInNode(key, node)) {
+			return;
+		}
+		if (node.keys == 3) {
+			if (node == root) {
+				root = new Tree234Node(null, node.key2);
+				node.parent = root;
+			} else {
+				insertKeyInParent(node);
+			}
+			Tree234Node left = new Tree234Node(node.parent, node.key1);
+			Tree234Node right = new Tree234Node(node.parent, node.key3);
+			left.keys = 1;
+			right.keys = 1;
+			if (node.key2 == node.parent.key1) {
+				node.parent.child4=node.parent.child3;
+				node.parent.child3 = node.parent.child2;
+		        node.parent.child2 = right;
+		        node.parent.child1 = left;
+			} else if (node.key2 == node.parent.key2) {
+				node.parent.child4 = node.parent.child3;
+		        node.parent.child3 = right;
+		        node.parent.child2 = left;
+			} else {
+				node.parent.child4 = right;
+		        node.parent.child3 = left;
+			}
+			left.child1 = node.child1;
+			left.child2 = node.child2;
+			right.child1 = node.child3;
+			right.child2 = node.child4;
+			if (node.child1 != null) {
+				left.child1.parent = left;
+		        left.child2.parent = left;
+		        right.child1.parent = right;
+		        right.child2.parent = right;
+			} else {
+				if (key < node.key1) {
+					node = left;
+				} else {
+					node = right;
+				}
+			}
+		}
+		Tree234Node next = getNextNode(node, key);
+		if (next == null) {
+			insertKey(node, key);
+			size++;
+		}
+		node = next;
+	}
+  }
+  
+  public boolean keyInNode(int key, Tree234Node n) {
+	  return (key == n.key1) || (key == n.key2) || (key == n.key3);
   }
 
+  public void insertKeyInParent(Tree234Node child) {
+	  Tree234Node parent = child.parent;
+	  if (child == parent.child1) {
+		  parent.key3=parent.key2;
+		  parent.key2=parent.key1;
+		  parent.key1=child.key2;
+	  } else if (child == parent.child2) {
+		  parent.key3=parent.key2;
+		  parent.key2=child.key2;
+	  } else if (child == parent.child3) {
+		  parent.key3 = child.key2;
+	  } else {
+		  System.err.println("ERROR: There were more than 3 children!");
+	  }
+	  parent.keys++;
+  }
 
   /**
    *  testHelper() prints the String representation of this tree, then
@@ -120,6 +199,32 @@ public class Tree234 extends IntDictionary {
     }
   }
 
+  public Tree234Node getNextNode(Tree234Node node, int key) {
+	  if (key < node.key1) {
+	      return node.child1;
+	    } else if ((node.keys == 1) || (key < node.key2)) {
+	      return node.child2;
+	    } else if ((node.keys == 2) || (key < node.key3)) {
+	      return node.child3;
+	    } else {
+	      return node.child4;
+	    }
+  }
+  
+  private void insertKey(Tree234Node node, int key) {
+	  if (key < node.key1) {
+	      node.key3 = node.key2;
+	      node.key2 = node.key1;
+	      node.key1 = key;
+	    } else if ((node.keys < 2) || (key < node.key2)) {
+	      node.key3 = node.key2;
+	      node.key2 = key;
+	    } else {
+	      node.key3 = key;
+	    }
+	    node.keys++;
+  }
+  
   /**
    *  main() is a bunch of test code.  Feel free to add test code of your own;
    *  this code won't be tested or graded.
