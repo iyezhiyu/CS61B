@@ -114,7 +114,15 @@ public class UDGraph
    */
   public UDGraph length2Paths() {
     UDGraph newGraph = new UDGraph(vertices);
-    // Put your answer to Part I here.
+    for (int k = 0; k<vertices; k++) {
+    	for (int i = 0; i<vertices; i++) {
+    		for (int j = 0; j<vertices; j++) {
+    			if (hasEdge(i,k) && hasEdge(k,j)) {
+    				newGraph.addEdge(i, j);
+    			}
+    		}
+    	}
+    }
     return newGraph;
   }
 
@@ -127,8 +135,33 @@ public class UDGraph
    */
   public UDGraph paths(int length) {
     UDGraph newGraph = new UDGraph(vertices);
-    // Put your answer to Part II here.
-    return newGraph;
+    if (length ==2) {
+    	for (int k = 0; k<vertices; k++) {
+        	for (int i = 0; i<vertices; i++) {
+        		for (int j = 0; j<vertices; j++) {
+        			if (hasEdge(i,k) && hasEdge(k,j)) {
+        				newGraph.addEdge(i, j);
+        			}
+        		}
+        	}
+        }
+    	return newGraph;
+    } else if (length > 2) {
+    	UDGraph tempGraph = paths(length-1);
+    	for (int k = 0; k<vertices; k++) {
+        	for (int i = 0; i<vertices; i++) {
+        		for (int j = 0; j<vertices; j++) {
+        			if (tempGraph.hasEdge(i,k) && hasEdge(k,j)) {
+        				newGraph.addEdge(i, j);
+        			} else if (hasEdge(i,k) && tempGraph.hasEdge(k, j)) {
+        				newGraph.addEdge(i, j);
+        			}
+        		}
+        	}
+        }
+    	return newGraph;
+    }
+    return null;
   }
 
   /**
