@@ -77,9 +77,83 @@ public class Maze {
      * integer.  randInt() generates different numbers every time the program
      * is run, so that you can make lots of different mazes.
      **/
-
-
-
+    int wallCount = horizontalSize*(verticalSize-1) + (horizontalSize-1)*verticalSize;
+    int[][] walls = new int[wallCount][3];
+    int count = 0;
+    int HORIZEN = 0;
+    int VERTICAL = 1;
+    if (vert > 1) {
+    	for (j = 0; j < vert -1; j++) {
+    		for (i = 0; i < horiz; i++) {
+    			walls[count][0] = i;
+    		    walls[count][1] = j;
+    		    walls[count][2] = HORIZEN; 
+    		    count++;
+    		}
+    	}
+    }
+    if (horiz > 1) {
+    	for (i = 0; i < horiz - 1; i++) {
+    		for (j = 0; j<vert; j++) {
+    			walls[count][0] = i;
+    			walls[count][1] = j;
+    			walls[count][2] = VERTICAL;
+    			count++;
+    		}
+    	}
+    }
+    
+    for (int m = wallCount; m > 0; m--) {
+    	int randInt = randInt(m);
+    	int[] temp = new int[3];
+    	
+    	temp[0] = walls[randInt][0];
+    	temp[1] = walls[randInt][1];
+    	temp[2] = walls[randInt][2];
+    	
+    	walls[randInt][0] = walls[m-1][0];
+    	walls[randInt][1] = walls[m-1][1];
+    	walls[randInt][2] = walls[m-1][2];
+    	
+    	walls[m-1][0] = temp[0];
+    	walls[m-1][1] = temp[1];
+    	walls[m-1][2] = temp[2];
+    }
+    
+    DisjointSets set = new DisjointSets(horiz*vert);
+    int x;
+    int y;
+    int upCell;
+    int downCell;
+    int upCellRoot;
+    int downCellRoot;
+    int leftCell;
+    int rightCell;
+    int leftCellRoot;
+    int rightCellRoot;
+    for (int m = 0; m<wallCount; m++) {
+    	x = walls[m][0];
+    	y = walls[m][1];
+    	if (walls[m][2] == HORIZEN) {
+    		upCell = y * horiz + x;
+    		downCell = upCell + horiz;
+    		upCellRoot = set.find(upCell);
+    		downCellRoot = set.find(downCell);
+    		if (upCellRoot != downCellRoot) {
+    			set.union(upCellRoot, downCellRoot);
+    			hWalls[x][y] = false;
+    		}
+    	} else if (walls[m][2] == VERTICAL) {
+    		leftCell = y * horiz + x;
+    		rightCell = leftCell + 1;
+    		leftCellRoot = set.find(leftCell);
+    		rightCellRoot = set.find(rightCell);
+    		if (leftCellRoot != rightCellRoot) {
+    			set.union(leftCellRoot, rightCellRoot);
+    			vWalls[x][y] = false;
+    		}
+    	}
+    }
   }
 
   /**
