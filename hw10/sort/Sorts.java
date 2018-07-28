@@ -26,7 +26,39 @@ public class Sorts {
    **/
   public static int[] countingSort(int[] keys, int whichDigit) {
     // Replace the following line with your solution.
-    return null;
+    int[] compareKeys = new int[keys.length];
+    int base = 15;
+    int m = power(16, whichDigit);
+    int[] counts = new int[16];
+    for (int i = 0; i<keys.length; i++) {
+    	compareKeys[i] = (keys[i] / m) & base;
+    	counts[compareKeys[i]]++;
+    }
+    
+    int total = 0;
+    int c;
+    for (int j = 0; j<counts.length; j++) {
+    	c = counts[j];
+    	counts[j] = total;
+    	total = total + c;
+    }
+    
+    int[] ans = new int[keys.length];
+    for (int i = 0; i < keys.length; i++) {
+    	ans[counts[compareKeys[i]]] = keys[i];
+    	counts[compareKeys[i]]++;
+    }
+    
+    return ans;
+  }
+  
+  private static int power(int base, int index) {
+	  int ans = 1;
+	  while (index > 0) {
+		  ans = ans * base;
+		  index--;
+	  }
+	  return ans;
   }
 
   /**
@@ -40,7 +72,10 @@ public class Sorts {
    **/
   public static int[] radixSort(int[] keys) {
     // Replace the following line with your solution.
-    return null;
+    for (int i = 0; i < 8; i++) {
+    	keys = countingSort(keys, i);
+    }
+    return keys;
   }
 
   /**
