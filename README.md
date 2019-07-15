@@ -1,5 +1,5 @@
 # CS61B
-This repository contains all my answers to the homework,labs and projects of the CS61B Data Structrues course.
+This repository contains all my answers to the homework, labs and projects of the CS61B Data Structrues course.
 
 This course is from the Department of Electrical Engineering and Computer Sciences, the Unversity of California, Berkeley.
 
